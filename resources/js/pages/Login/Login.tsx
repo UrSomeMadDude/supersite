@@ -5,34 +5,61 @@ import styles from "./login.module.scss";
 import classNames from "classnames/bind";
 import { Button, TextField } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { login, register, selectError } from "../../redux/auth/authSlice";
+import {
+    login,
+    register,
+    selectEmail,
+    selectError,
+} from "../../redux/auth/authSlice";
+import { routes } from "../../routeConfig";
 
 const cx = classNames.bind(styles);
 
+interface IFormData {
+    email: string;
+    password: string;
+}
+
 function Login() {
     const error = useAppSelector(selectError);
+    const email = useAppSelector(selectEmail);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
-    const initialValues = {
+    const initialValues: IFormData = {
         email: "",
         password: "",
     };
 
-    useEffect(() => {}, []);
+    const handleLogin = (obj: IFormData): void => {
+        dispatch(
+            login({
+                email: obj.email,
+                password: obj.password,
+            })
+        );
+    };
+    const handleRegister = (obj: IFormData): void => {
+        dispatch(
+            register({
+                email: obj.email,
+                password: obj.password,
+            })
+        );
+    };
+
+    useEffect(() => {
+        if (email) {
+            navigate(routes.home, { replace: true });
+        }
+    }, [email]);
 
     return (
         <div className={cx("login__container")}>
+            {error && <div>{error}</div>}
             <Formik
                 initialValues={initialValues}
                 enableReinitialize
-                onSubmit={(values) =>
-                    dispatch(
-                        login({
-                            email: values.email,
-                            password: values.password,
-                        })
-                    )
-                }
+                onSubmit={(values) => handleLogin(values)}
             >
                 {({ values, submitForm }) => (
                     <Form>
@@ -65,14 +92,7 @@ function Login() {
                             </Button>
                             <Button
                                 variant="contained"
-                                onClick={() =>
-                                    dispatch(
-                                        register({
-                                            email: values.email,
-                                            password: values.password,
-                                        })
-                                    )
-                                }
+                                onClick={() => handleRegister(values)}
                                 sx={{
                                     width: "100%",
                                 }}

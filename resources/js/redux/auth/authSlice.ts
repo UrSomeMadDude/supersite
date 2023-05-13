@@ -6,12 +6,14 @@ interface authState {
     loading: boolean;
     error: null | string;
     userEmail: null | string;
+    isInitialized: boolean;
 }
 
 const initialState: authState = {
     loading: false,
     error: null,
     userEmail: null,
+    isInitialized: false,
 };
 
 export const login = createAsyncThunk(
@@ -31,7 +33,7 @@ export const register = createAsyncThunk(
     "auth/register",
     async (obj, { rejectWithValue }) => {
         try {
-            const response = await axios.post("/api/register", obj);
+            const response = await axios.post("/api/registration", obj);
 
             return response.data;
         } catch (error) {
@@ -45,8 +47,17 @@ export const authSlice = createSlice({
     initialState,
     reducers: {
         logOut: () => {
+            localStorage.clear();
             return {
                 ...initialState,
+                isInitialized: true,
+            };
+        },
+        getUserData: (state, action) => {
+            return {
+                ...state,
+                userEmail: action.payload.email,
+                isInitialized: true,
             };
         },
     },
@@ -59,6 +70,7 @@ export const authSlice = createSlice({
                 };
             })
             .addCase(login.fulfilled, (state, action) => {
+                localStorage.setItem("userMail", action.payload.email);
                 return {
                     ...state,
                     loading: false,
@@ -69,13 +81,42 @@ export const authSlice = createSlice({
                 return {
                     ...state,
                     loading: false,
-                    error: "Invalid email or password",
+                    error: action.payload.error,
+                };
+            })
+            .addCase(register.pending, (state) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
+            .addCase(register.fulfilled, (state, action) => {
+                return {
+                    ...state,
+                    loading: false,
+                    userEmail: action.payload.email,
+                    error: action.payload.error ? action.payload.error : null,
+                };
+            })
+            .addCase(register.rejected, (state, action) => {
+                return {
+                    ...state,
+                    loading: false,
+                    error: action.payload.error,
                 };
             });
     },
 });
 
+export const { getUserData, logOut } = authSlice.actions;
+
 export const selectError = (state: RootState): string | null =>
     state.auth.error;
+
+export const selectEmail = (state: RootState): string | null =>
+    state.auth.userEmail;
+
+export const selectIsInitialized = (state: RootState): boolean =>
+    state.auth.isInitialized;
 
 export default authSlice.reducer;

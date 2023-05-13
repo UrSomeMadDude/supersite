@@ -1,0 +1,20 @@
+.home {
+    &__container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 15px;
+    }
+    &__table {
+        max-width: 1200px;
+    }
+    &__form {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+}

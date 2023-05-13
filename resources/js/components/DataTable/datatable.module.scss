@@ -1,0 +1,24 @@
+.datatable {
+    &__container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        gap: 20px;
+        min-width: 250px;
+    }
+    &__option {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: blanchedalmond;
+        border-radius: 12px;
+        padding: 5px;
+        width: 100%;
+    }
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
