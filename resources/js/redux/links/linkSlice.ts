@@ -5,13 +5,15 @@ import axios from "axios";
 interface linkState {
     loading: boolean;
     error: null | string;
-    photoLlinks: string[];
+    siteLinks: string[];
+    currentLinks: string[];
 }
 
 const initialState: linkState = {
     loading: false,
     error: null,
-    photoLlinks: [],
+    siteLinks: [],
+    currentLinks: [],
 };
 
 export const sendLinks = createAsyncThunk(
@@ -19,6 +21,19 @@ export const sendLinks = createAsyncThunk(
     async (obj: string[], { rejectWithValue }) => {
         try {
             const response = await axios.post("/api/links", obj);
+
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
+export const getLinks = createAsyncThunk(
+    "links/get",
+    async (obj, { rejectWithValue }) => {
+        try {
+            const response = await axios.get("/api/links");
 
             return response.data;
         } catch (error) {
@@ -43,10 +58,28 @@ export const linkSlice = createSlice({
                 return {
                     ...state,
                     loading: false,
-                    photoLlinks: action.payload,
+                    currentLinks: action.payload.links,
+                };
+            })
+            .addCase(getLinks.pending, (state) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
+            .addCase(getLinks.fulfilled, (state, action) => {
+                return {
+                    ...state,
+                    loading: false,
+                    siteLinks: action.payload.links,
                 };
             });
     },
 });
+
+export const selectSiteLinks = (state: RootState): string[] =>
+    state.links.siteLinks;
+export const selectCurrentLinks = (state: RootState): string[] =>
+    state.links.currentLinks;
 
 export default linkSlice.reducer;

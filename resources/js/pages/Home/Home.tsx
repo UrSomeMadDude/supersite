@@ -1,14 +1,23 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styles from "./home.module.scss";
 import classNames from "classnames/bind";
 import DataTable from "../../components/DataTable/DataTable";
 import MultipleSelect from "../../components/MultipleSelect";
 import { Button, Select, SelectChangeEvent } from "@mui/material";
 import { Field, Form, Formik } from "formik";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { getLinks, selectSiteLinks } from "../../redux/links/linkSlice";
 
 const cx = classNames.bind(styles);
 
 function Home(): React.ReactElement<React.FC> {
+    const dispatch = useAppDispatch();
+    const siteLinks = useAppSelector(selectSiteLinks);
+
+    useEffect(() => {
+        dispatch(getLinks());
+    }, [dispatch]);
+
     return (
         <div className={cx("home__container")}>
             <h2>Проверить соответвие сайта</h2>
@@ -27,7 +36,7 @@ function Home(): React.ReactElement<React.FC> {
                                 name="links"
                                 as={MultipleSelect}
                                 label="Выберите URL"
-                                options={["yes", "no"]}
+                                options={siteLinks}
                                 onChange={(
                                     event: SelectChangeEvent<string[]>
                                 ) => {
@@ -56,7 +65,7 @@ function Home(): React.ReactElement<React.FC> {
                 )}
             </Formik>
             <div className={cx("home__table")}>
-                <DataTable options={["yes", "no"]} />
+                <DataTable options={siteLinks} />
             </div>
         </div>
     );
