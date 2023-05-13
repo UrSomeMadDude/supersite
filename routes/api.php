@@ -21,3 +21,4 @@ Route::post('/registration', [MainController::class, 'registerUser']);
 Route::post('/links', [LinksController::class, 'save']);
 Route::get('/links', [LinksController::class, 'links']);
 Route::post('/image', [ImagesController::class, 'save']);
+Route::get('/image', [ImagesController::class, 'get']);
