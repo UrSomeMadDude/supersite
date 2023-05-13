@@ -2,54 +2,51 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\RegistrationRequest;
-use App\Models\User;
-use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class MainController extends Controller
 {
-    public function showLogin()
+    public function logIn(Request $request)
     {
-        return view('Login');
-    }
+        $email = $request->input('email');
+        $password = $request->input('password');
 
-    public function logIn(LoginRequest $request)
-    {
-        if (Auth::attempt($request->only('email', 'password'), $request->filled('remember'))) {
-            return redirect()->intended('/main');
-        }
-        return redirect()->back()->withInput();
-    }
+        $file = storage_path('app/users.txt');
+        $users = file($file, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
 
-    public function logOut()
-    {
-        Auth::logout();
-        return redirect('/main');
-    }
-
-    public function showRegistration()
-    {
-        return view('Registration');
-    }
-
-    public function registerUser(RegistrationRequest $request)
-    {
-        if (User::where('email', $request->email)->exists()) {
-            return redirect()->back();
+        foreach ($users as $user) {
+            [$existingEmail, $existingPassword] = explode(':', $user);
+            if ($email == $existingEmail && $password == $existingPassword) {
+                return response()->json(['success' => true]);
+            }
+            return response()->json([
+                'success' => false,
+                'error' => 'Password or email is incorrect'
+            ]);
         }
 
-        event(new Registered($user = $this->create($request->all())));
-
-        Auth::login($user);
-
-        return redirect()->intended('/main');
+        return response()->json(['success' => false, 'message' => 'Invalid email or password']);
     }
 
-    public function showMain()
+    public function registerUser(Request $request)
     {
-        return view('Main');
+        $email = $request->input('email');
+        $password = $request->input('password');
+        $file = storage_path('app/users.txt');
+
+        $existingUsers = file_get_contents($file);
+        if (strpos($existingUsers, $email . ':') !== false) {
+            return response()->json([
+                'success' => false,
+                'error' => 'This user already registered'
+            ]);
+        }
+
+        file_put_contents($file, $email . ':' . $password . PHP_EOL, FILE_APPEND);
+
+        return response()->json([
+            'success' => true,
+            'email' => $email
+        ]);
     }
 }

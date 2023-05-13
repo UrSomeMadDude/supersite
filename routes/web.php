@@ -14,6 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/login', [MainController::class, 'showLogin'])->name('login.show');
-Route::get('/main', [MainController::class, 'showMain'])->name('main.show');
-Route::get('/registration', [MainController::class, 'showRegistration'])->name('registration.show');
+// Route::get('/login', [MainController::class, 'logIn']);
+// Route::get('/main', [MainController::class, 'showMain'])->name('main.show');
+// Route::get('/registration', [MainController::class, 'showRegistration'])->name('registration.show');
