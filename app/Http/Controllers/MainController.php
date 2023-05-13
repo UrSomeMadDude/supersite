@@ -22,13 +22,12 @@ class MainController extends Controller
                     'email' => $email
                 ]);
             }
-            return response()->json([
-                'success' => false,
-                'error' => 'Password or email is incorrect'
-            ]);
         }
 
-        return response()->json(['success' => false, 'message' => 'Invalid email or password']);
+        return response()->json([
+            'success' => false,
+            'error' => 'Password or email is incorrect'
+        ]);
     }
 
     public function registerUser(Request $request)
