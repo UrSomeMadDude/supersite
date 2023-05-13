@@ -26,17 +26,17 @@ class LinksController extends Controller
 
     public function new()
     {
-        // $process = new Process(['python', public_path('script.py')]);
-        $process = new Process(['python', base_path('public\script.py')]);
-        $process->run();
+        $path = base_path("public\script.py");
+        $output = shell_exec("python $path");
+        return response()->json(['message' => $output]);
+        // $process = new Process(['python', "D:\OpenServer\OSPanel\domains\super\public\script.py"]);
+        // $process->run();
 
-        if (!$process->isSuccessful()) {
-            throw new ProcessFailedException($process);
-        }
+        // if (!$process->isSuccessful()) {
+        //     throw new ProcessFailedException($process);
+        // }
 
-        echo $process->getOutput();
-
-        return response()->json(['message' => 'Python script executed successfully']);
+        // echo $process->getOutput();
     }
 
     public function links()
