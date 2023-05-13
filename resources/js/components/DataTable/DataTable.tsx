@@ -12,9 +12,13 @@ export default function DataTable(props: IDataTable) {
     return (
         <div className={cx("datatable__container")}>
             {props.options.map((option) => (
-                <div className={cx("datatable__option")}>
-                    <a href={option}> {option} </a>
-                </div>
+                <a
+                    key={option}
+                    href={option}
+                    className={cx("datatable__option")}
+                >
+                    <div>{option}</div>
+                </a>
             ))}
         </div>
     );
