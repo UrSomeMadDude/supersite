@@ -2,24 +2,43 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import type { RootState } from "../store";
 import axios from "axios";
 
-const initialState = {
+interface authState {
+    loading: boolean;
+    error: null | string;
+    userEmail: null | string;
+}
+
+const initialState: authState = {
     loading: false,
     error: null,
     userEmail: null,
 };
 
-const axiosInstanse = axios.create({
-    headers: {
-        "Content-Type": "application/json",
-    },
-});
+export const login = createAsyncThunk(
+    "auth/login",
+    async (obj, { rejectWithValue }) => {
+        try {
+            const response = await axios.post("/api/login", obj);
 
-export const login = createAsyncThunk("auth/login", async (obj) => {
-    console.log(obj);
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error);
+        }
+    }
+);
 
-    const { data } = await axiosInstanse.get("/api/login", obj);
-    return data;
-});
+export const register = createAsyncThunk(
+    "auth/register",
+    async (obj, { rejectWithValue }) => {
+        try {
+            const response = await axios.post("/api/register", obj);
+
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error);
+        }
+    }
+);
 
 export const authSlice = createSlice({
     name: "auth",
@@ -50,10 +69,13 @@ export const authSlice = createSlice({
                 return {
                     ...state,
                     loading: false,
-                    error: "error",
+                    error: "Invalid email or password",
                 };
             });
     },
 });
+
+export const selectError = (state: RootState): string | null =>
+    state.auth.error;
 
 export default authSlice.reducer;
