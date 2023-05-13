@@ -31,7 +31,7 @@ export const register = createAsyncThunk(
     "auth/register",
     async (obj, { rejectWithValue }) => {
         try {
-            const response = await axios.post("/api/register", obj);
+            const response = await axios.post("/api/registration", obj);
 
             return response.data;
         } catch (error) {
@@ -69,7 +69,31 @@ export const authSlice = createSlice({
                 return {
                     ...state,
                     loading: false,
-                    error: "Invalid email or password",
+                    error: action.payload.error,
+                };
+            })
+            .addCase(register.pending, (state) => {
+                return {
+                    ...state,
+                    loading: true,
+                };
+            })
+            .addCase(register.fulfilled, (state, action) => {
+                console.log(action);
+
+                return {
+                    ...state,
+                    loading: false,
+                    userEmail: action.payload.email,
+                };
+            })
+            .addCase(register.rejected, (state, action) => {
+                console.log(action);
+
+                return {
+                    ...state,
+                    loading: false,
+                    error: action.payload.error,
                 };
             });
     },
