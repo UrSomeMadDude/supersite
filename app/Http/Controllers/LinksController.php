@@ -27,32 +27,36 @@ class LinksController extends Controller
     public function new()
     {
         // $process = new Process(['python', public_path('script.py')]);
-        $process = new Process(['python', base_path('public\script.py')]);
-        $process->run();
+        /* $process = new Process(['python', base_path('public\script.py')]);
+        $process->run(); */
+        //C:\hakaton-super-site\public\script.py
+        $output = shell_exec("python C:\hakaton-super-site\public\script.py");
 
-        if (!$process->isSuccessful()) {
+        /* if (!$process->isSuccessful()) {
             throw new ProcessFailedException($process);
         }
 
-        echo $process->getOutput();
+        echo $process->getOutput(); */
 
-        return response()->json(['message' => 'Python script executed successfully']);
+        return response()->json(['message' => $output]);
     }
 
     public function links()
     {
         $file = storage_path('app/links.txt');
-        $links = [];
+        $lines = [];
 
         if (file_exists($file)) {
-            $content = file_get_contents($file);
-            $content = str_replace(' ', '', $content);
-            $array = explode(PHP_EOL, $content);
-            foreach ($array as $link) {
-                $links[] = $link;
+            $handle = fopen($file, "r");
+            if ($handle) {
+                while (($line = fgets($handle)) !== false) {
+                    $content = str_replace('\n', '', $line);
+                    $lines[] = $content;
+                }
+                fclose($handle);
             }
         }
 
-        return response()->json(['links' => $links]);
+        return response()->json(['links' => $lines]);
     }
 }
