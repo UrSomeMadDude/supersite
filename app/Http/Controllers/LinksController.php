@@ -26,9 +26,23 @@ class LinksController extends Controller
 
     public function new()
     {
+<<<<<<< HEAD
         $output = shell_exec("python C:\hakaton-super-site\public\script.py");
 
         return response()->json(['message' => $output]);
+=======
+        $path = base_path("public\script.py");
+        $output = shell_exec("python $path");
+        return response()->json(['message' => $output]);
+        // $process = new Process(['python', "D:\OpenServer\OSPanel\domains\super\public\script.py"]);
+        // $process->run();
+
+        // if (!$process->isSuccessful()) {
+        //     throw new ProcessFailedException($process);
+        // }
+
+        // echo $process->getOutput();
+>>>>>>> bc318805cb536269f9ddcdad97c56927187a4ea5
     }
 
     public function links()
