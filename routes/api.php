@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ImagesController;
 use App\Http\Controllers\LinksController;
 use App\Http\Controllers\MainController;
 use Illuminate\Support\Facades\Route;
@@ -15,7 +16,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/login', [MainController::class, 'logIn']);
+Route::post('/login', [MainController::class, 'logIn']);
 Route::post('/registration', [MainController::class, 'registerUser']);
 Route::post('/links', [LinksController::class, 'save']);
 Route::get('/links', [LinksController::class, 'links']);
+Route::post('/image', [ImagesController::class, 'save']);
