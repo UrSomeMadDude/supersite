@@ -1,25 +1,38 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Formik, Form, Field } from "formik";
 import { useNavigate } from "react-router-dom";
 import styles from "./login.module.scss";
 import classNames from "classnames/bind";
 import { Button, TextField } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "../../redux/hooks";
+import { login, register, selectError } from "../../redux/auth/authSlice";
 
 const cx = classNames.bind(styles);
 
 function Login() {
+    const error = useAppSelector(selectError);
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const initialValues = {
         email: "",
         password: "",
     };
+
+    useEffect(() => {}, []);
 
     return (
         <div className={cx("login__container")}>
             <Formik
                 initialValues={initialValues}
                 enableReinitialize
-                onSubmit={(values) => console.log(values)}
+                onSubmit={(values) =>
+                    dispatch(
+                        login({
+                            email: values.email,
+                            password: values.password,
+                        })
+                    )
+                }
             >
                 {({ values, submitForm }) => (
                     <Form>
@@ -49,6 +62,22 @@ function Login() {
                                 }}
                             >
                                 Войти
+                            </Button>
+                            <Button
+                                variant="contained"
+                                onClick={() =>
+                                    dispatch(
+                                        register({
+                                            email: values.email,
+                                            password: values.password,
+                                        })
+                                    )
+                                }
+                                sx={{
+                                    width: "100%",
+                                }}
+                            >
+                                Зарегистрироваться
                             </Button>
                         </div>
                     </Form>
