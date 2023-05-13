@@ -26,9 +26,8 @@ class LinksController extends Controller
 
     public function new()
     {
-        echo base_path('public\script.py');
-        $process = new Process(['python', public_path('script.py')]);
-        // $process = new Process(['python', base_path('public\script.py')]);
+        // $process = new Process(['python', public_path('script.py')]);
+        $process = new Process(['python', base_path('public\script.py')]);
         $process->run();
 
         if (!$process->isSuccessful()) {
@@ -48,7 +47,10 @@ class LinksController extends Controller
         if (file_exists($file)) {
             $content = file_get_contents($file);
             $content = str_replace(' ', '', $content);
-            $links = explode(',', $content);
+            $array = explode(PHP_EOL, $content);
+            foreach ($array as $link) {
+                $links[] = $link;
+            }
         }
 
         return response()->json(['links' => $links]);
