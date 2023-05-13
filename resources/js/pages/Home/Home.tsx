@@ -6,17 +6,28 @@ import MultipleSelect from "../../components/MultipleSelect";
 import { Button, Select, SelectChangeEvent } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { getLinks, selectSiteLinks } from "../../redux/links/linkSlice";
+import {
+    getLinks,
+    selectCurrentLinks,
+    selectSiteLinks,
+    sendLinks,
+} from "../../redux/links/linkSlice";
 
 const cx = classNames.bind(styles);
 
 function Home(): React.ReactElement<React.FC> {
     const dispatch = useAppDispatch();
     const siteLinks = useAppSelector(selectSiteLinks);
+    const currentLinks = useAppSelector(selectCurrentLinks);
 
     useEffect(() => {
         dispatch(getLinks());
     }, [dispatch]);
+
+    const handleSaveLinks = async (links: string[]): Promise<void> => {
+        await dispatch(sendLinks(links));
+        dispatch(getLinks());
+    };
 
     return (
         <div className={cx("home__container")}>
@@ -27,7 +38,13 @@ function Home(): React.ReactElement<React.FC> {
                 initialValues={{
                     links: [],
                 }}
-                onSubmit={(values) => console.log(values)}
+                onSubmit={(values: string[]) =>
+                    handleSaveLinks(
+                        currentLinks && values.length === 0
+                            ? currentLinks
+                            : values
+                    )
+                }
             >
                 {({ setFieldValue, submitForm }) => (
                     <Form>

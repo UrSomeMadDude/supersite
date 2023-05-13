@@ -26,6 +26,11 @@ class LinksController extends Controller
 
     public function new()
     {
+<<<<<<< HEAD
+        $output = shell_exec("python C:\hakaton-super-site\public\script.py");
+
+        return response()->json(['message' => $output]);
+=======
         $path = base_path("public\script.py");
         $output = shell_exec("python $path");
         return response()->json(['message' => $output]);
@@ -37,22 +42,25 @@ class LinksController extends Controller
         // }
 
         // echo $process->getOutput();
+>>>>>>> bc318805cb536269f9ddcdad97c56927187a4ea5
     }
 
     public function links()
     {
         $file = storage_path('app/links.txt');
-        $links = [];
+        $lines = [];
 
         if (file_exists($file)) {
-            $content = file_get_contents($file);
-            $content = str_replace(' ', '', $content);
-            $array = explode(PHP_EOL, $content);
-            foreach ($array as $link) {
-                $links[] = $link;
+            $handle = fopen($file, "r");
+            if ($handle) {
+                while (($line = fgets($handle)) !== false) {
+                    $content = str_replace('\n', '', $line);
+                    $lines[] = $content;
+                }
+                fclose($handle);
             }
         }
 
-        return response()->json(['links' => $links]);
+        return response()->json(['links' => $lines]);
     }
 }
