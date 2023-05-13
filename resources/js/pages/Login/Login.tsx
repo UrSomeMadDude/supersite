@@ -5,7 +5,13 @@ import styles from "./login.module.scss";
 import classNames from "classnames/bind";
 import { Button, TextField } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
-import { login, register, selectError } from "../../redux/auth/authSlice";
+import {
+    login,
+    register,
+    selectEmail,
+    selectError,
+} from "../../redux/auth/authSlice";
+import { routes } from "../../routeConfig";
 
 const cx = classNames.bind(styles);
 
@@ -16,6 +22,7 @@ interface IFormData {
 
 function Login() {
     const error = useAppSelector(selectError);
+    const email = useAppSelector(selectEmail);
     const navigate = useNavigate();
     const dispatch = useAppDispatch();
     const initialValues: IFormData = {
@@ -40,7 +47,11 @@ function Login() {
         );
     };
 
-    useEffect(() => {}, []);
+    useEffect(() => {
+        if (email) {
+            navigate(routes.home, { replace: true });
+        }
+    }, [email]);
 
     return (
         <div className={cx("login__container")}>

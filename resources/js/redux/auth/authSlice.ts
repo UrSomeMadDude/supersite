@@ -6,12 +6,14 @@ interface authState {
     loading: boolean;
     error: null | string;
     userEmail: null | string;
+    isInitialized: boolean;
 }
 
 const initialState: authState = {
     loading: false,
     error: null,
     userEmail: null,
+    isInitialized: false,
 };
 
 export const login = createAsyncThunk(
@@ -45,8 +47,17 @@ export const authSlice = createSlice({
     initialState,
     reducers: {
         logOut: () => {
+            localStorage.clear();
             return {
                 ...initialState,
+                isInitialized: true,
+            };
+        },
+        getUserData: (state, action) => {
+            return {
+                ...state,
+                userEmail: action.payload.email,
+                isInitialized: true,
             };
         },
     },
@@ -59,6 +70,7 @@ export const authSlice = createSlice({
                 };
             })
             .addCase(login.fulfilled, (state, action) => {
+                localStorage.setItem("userMail", action.payload.email);
                 return {
                     ...state,
                     loading: false,
@@ -96,10 +108,15 @@ export const authSlice = createSlice({
     },
 });
 
+export const { getUserData, logOut } = authSlice.actions;
+
 export const selectError = (state: RootState): string | null =>
     state.auth.error;
 
 export const selectEmail = (state: RootState): string | null =>
     state.auth.userEmail;
+
+export const selectIsInitialized = (state: RootState): boolean =>
+    state.auth.isInitialized;
 
 export default authSlice.reducer;
