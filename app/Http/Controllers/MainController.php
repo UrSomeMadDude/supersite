@@ -17,7 +17,10 @@ class MainController extends Controller
         foreach ($users as $user) {
             [$existingEmail, $existingPassword] = explode(':', $user);
             if ($email == $existingEmail && $password == $existingPassword) {
-                return response()->json(['success' => true]);
+                return response()->json([
+                    'success' => true,
+                    'email' => $email
+                ]);
             }
             return response()->json([
                 'success' => false,
