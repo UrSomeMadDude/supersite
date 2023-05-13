@@ -79,17 +79,14 @@ export const authSlice = createSlice({
                 };
             })
             .addCase(register.fulfilled, (state, action) => {
-                console.log(action);
-
                 return {
                     ...state,
                     loading: false,
                     userEmail: action.payload.email,
+                    error: action.payload.error ? action.payload.error : null,
                 };
             })
             .addCase(register.rejected, (state, action) => {
-                console.log(action);
-
                 return {
                     ...state,
                     loading: false,
@@ -101,5 +98,8 @@ export const authSlice = createSlice({
 
 export const selectError = (state: RootState): string | null =>
     state.auth.error;
+
+export const selectEmail = (state: RootState): string | null =>
+    state.auth.userEmail;
 
 export default authSlice.reducer;
