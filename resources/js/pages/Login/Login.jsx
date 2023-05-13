@@ -4,11 +4,14 @@ import { useNavigate } from "react-router-dom";
 import styles from "./login.module.scss";
 import classNames from "classnames/bind";
 import { Button, TextField } from "@mui/material";
+import { useAppDispatch } from "../../redux/hooks";
+import { login } from "../../redux/auth/authSlice";
 
 const cx = classNames.bind(styles);
 
 function Login() {
     const navigate = useNavigate();
+    const dispatch = useAppDispatch();
     const initialValues = {
         email: "",
         password: "",
@@ -19,7 +22,14 @@ function Login() {
             <Formik
                 initialValues={initialValues}
                 enableReinitialize
-                onSubmit={(values) => console.log(values)}
+                onSubmit={(values) =>
+                    dispatch(
+                        login({
+                            email: values.email,
+                            password: values.password,
+                        })
+                    )
+                }
             >
                 {({ values, submitForm }) => (
                     <Form>
